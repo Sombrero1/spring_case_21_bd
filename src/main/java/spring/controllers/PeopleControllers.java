@@ -1,12 +1,15 @@
 package spring.controllers;
 
 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import spring.dao.PeopleDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import spring.models.Person;
+
+import javax.validation.Valid;
 
 
 @Controller
@@ -38,7 +41,9 @@ public class PeopleControllers {
 //        return "redirect:/people";
 //    }
     @PostMapping
-    public String newPerson(@ModelAttribute("person")Person person){
+    public String newPerson(@ModelAttribute("person")@Valid Person person, BindingResult bindingResult){
+        if(bindingResult.hasErrors()) return "/people/new";
+
         peopleDAO.save(person);
         return "redirect:/people";
     }
@@ -50,7 +55,8 @@ public class PeopleControllers {
     }
 
     @PatchMapping("/{id}")
-    public String editPersonPage(@ModelAttribute("person") Person person){
+    public String editPersonPage(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult){
+        if(bindingResult.hasErrors()) return "/people/edit";
         peopleDAO.edit(person);
         return "redirect:/people";
     }
